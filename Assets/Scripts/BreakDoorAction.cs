@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ Break the door if in range
+ */
 public class BreakDoorAction : AIAction {
 
 	private bool hasBrokenDoor;

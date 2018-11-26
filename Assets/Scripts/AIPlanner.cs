@@ -3,16 +3,24 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+/*
+ Object that handles construction and processing path to find the most optimal sequence of actions
+ to take at any given time.
+ */
 public class AIPlanner
 {
+    // Returns a queue of optimal actions to achieve goals based on current world conditions. 
     public Queue<AIAction> planActions(GameObject actor, HashSet<AIAction> allActions, Dictionary<string, object> worldConditions, Dictionary<string, object> goalConditions)
     {
+        // No goal conditions
         if(goalConditions.Count == 0)
             return null;
 
+        // Restart all actions
         foreach(AIAction action in allActions)
             action.reset();
 
+        // Check if its a valid action
         HashSet<AIAction> validActions = new HashSet<AIAction>();
         foreach(AIAction action in allActions)
             if(action.checkRuntimePrerequisites(actor))
@@ -41,8 +49,8 @@ public class AIPlanner
                     cheapestLeaf = leaf;
         }
 
+        // Add shortest path to queue of actions
         Queue<AIAction> actionQueue = new Queue<AIAction>();
-
         ActionNode actionToAdd = cheapestLeaf;
         while(actionToAdd.action != null)
         {
@@ -54,20 +62,22 @@ public class AIPlanner
         return actionQueue;
     }
 
+    // Finds all possible nodes that lead to consecutiveAction and returns if any action has been found
     private bool findParentAction(ActionNode consecutiveAction, List<ActionNode> leaves, HashSet<AIAction> validActions, Dictionary<string, object> worldConditions)
     {
         bool hasFoundAction = false;
 
         foreach(AIAction action in validActions)
         {
-            //Debug.Log(action.ToString() + "is " + isLeadingToState(action.Effects, consecutiveAction.state).ToString());
-
+            // The action leads to the nodes current state
             if(isLeadingToState(action.Effects, consecutiveAction.state))
             {
+                // Update current state conditions
                 Dictionary<string, object> currentState = updateState(consecutiveAction.state, action.Prerequisites);
 
                 ActionNode precedingAction = new ActionNode(consecutiveAction, consecutiveAction.totalCost + action.costToPerform, currentState, action);
 
+                // If it leads to current state add the action node
                 if(isLeadingToState(worldConditions, currentState))
                 {
                     leaves.Add(precedingAction);
@@ -75,9 +85,10 @@ public class AIPlanner
                 }
                 else
                 {
+                    // Remove action evaluated
                     HashSet<AIAction> updatedSet = removeFromSet(validActions, action);
 
-                    // More possible preceding actions found
+                    // Search for more possible actions (which may be less costly)
                     if(findParentAction(precedingAction, leaves, updatedSet, worldConditions))
                         hasFoundAction = true;
                 }
@@ -87,11 +98,13 @@ public class AIPlanner
         return hasFoundAction;
     }
 
+    // Return whether or not the effects passed lead to the current state passed
     private bool isLeadingToState(Dictionary<string, object> effects, Dictionary<string, object> currentStates)
     {
         bool isCauseOfState = false;
         foreach(string state in currentStates.Keys)
         {
+            // The effect leads to 'state'
             if(effects.ContainsKey(state))
             {
                 if(currentStates[state].Equals(effects[state]))
@@ -104,16 +117,19 @@ public class AIPlanner
         return isCauseOfState;
     }
 
+    // Update the current state with the change passed
     public Dictionary<string, object> updateState(Dictionary<string, object> currentState, Dictionary<string, object> stateChange)
     {
         Dictionary<string, object> updatedState = new Dictionary<string, object>(currentState);
 
         foreach(string key in stateChange.Keys)
         {
+            // Update condition when it exists in current state
             if(currentState.ContainsKey(key))
             {
                 updatedState[key] = stateChange[key];
             }
+            // Add new condition to state
             else
             {
                 updatedState.Add(key, stateChange[key]);
@@ -123,6 +139,7 @@ public class AIPlanner
         return updatedState;
     }
 
+    // Remove action from the set passed and return the updated set
     private HashSet<AIAction> removeFromSet(HashSet<AIAction> actionSet, AIAction actionToRemove)
     {
         HashSet<AIAction> updatedSet = new HashSet<AIAction>();

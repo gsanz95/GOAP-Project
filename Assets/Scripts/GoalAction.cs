@@ -3,6 +3,9 @@ using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ Look for the goal and destroy it once reached
+ */
 public class GoalAction : AIAction
 {
     private bool hasReachedGoal;

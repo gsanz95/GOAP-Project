@@ -3,6 +3,9 @@ using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ If actor has key the door will be unlocked
+*/
 public class UnlockDoorAction : AIAction
 {
     private bool isUnlocked;

@@ -2,6 +2,9 @@
 using UnityEngine;
 using System.Text;
 
+/*
+ Abstract class to be extended into true actions and used to reach goal
+ */
 public abstract class AIAction : MonoBehaviour {
 
 	private Dictionary<string, object> prerequisites;

@@ -8,12 +8,10 @@ public class actorControl : MonoBehaviour {
 
 	private float movementX;
 	private float movementZ;
-	[SerializeField]
 	public float movementSpeed;
 	private Rigidbody actorRigidBody;
 	private Vector3 mousePosition;
 	private Vector3 lineStart;
-
 	private NavMeshAgent actorNavigation;
 
 	// Use this for initialization
@@ -26,14 +24,16 @@ public class actorControl : MonoBehaviour {
 	void FixedUpdate () {
 		// updatePlayerMovement();
 		// lookAtMouse();
-		// navigateTowards;
+		// navigateTowards();
 	}
 
+	// Updates gameObject position according to user input
 	void updatePlayerMovement() {
 		Vector3 desiredPosition = new Vector3(checkMovementX(), 0f, checkMovementZ());
 		actorRigidBody.MovePosition(actorRigidBody.position + desiredPosition);
 	}
 
+	// Updates X-axis position relative to user input
 	float checkMovementX() {
 		movementX = Input.GetAxisRaw("Horizontal");
 		movementX *= movementSpeed;
@@ -41,6 +41,7 @@ public class actorControl : MonoBehaviour {
 		return movementX;
 	}
 
+	// Updates Z-axis position relative to user input
 	float checkMovementZ() {
 		movementZ = Input.GetAxisRaw("Vertical");
 		movementZ *= movementSpeed;
@@ -48,16 +49,20 @@ public class actorControl : MonoBehaviour {
 		return movementZ;
 	}
 
+	// Rotates the gameObject to point towards the mouse position projected on the screen
 	void lookAtMouse() {
 		mousePosition = Input.mousePosition;
 		Ray path = Camera.main.ScreenPointToRay(mousePosition);
 		RaycastHit targetHit;
+
+		// If Ray hits a point in the game
 		if(Physics.Raycast(path, out targetHit, Mathf.Infinity))
 		{
 			actorRigidBody.transform.LookAt(new Vector3(targetHit.point.x, actorRigidBody.transform.position.y, targetHit.point.z));
 		}
 	}
 
+	// Uses NavMesh to navigate the gameObject containing this script towards the end
 	public void navigateTowards(GameObject target)
 	{
 		actorNavigation.SetDestination(target.transform.position);

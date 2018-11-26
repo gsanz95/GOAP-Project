@@ -3,6 +3,9 @@ using System.Text;
 using UnityEngine;
 using System.Collections.Generic;
 
+/*
+ Grab the key and destroy it one grabbed
+ */
 public class GrabKeyAction : AIAction
 {
     private bool hasKey;
