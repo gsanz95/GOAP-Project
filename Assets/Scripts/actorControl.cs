@@ -67,4 +67,11 @@ public class actorControl : MonoBehaviour {
 	{
 		actorNavigation.SetDestination(target.transform.position);
 	}
+
+	public void teleportAcross(Vector3 position)
+	{
+		Vector3 deltaPosition = position - actorRigidBody.position;
+		Debug.Log(deltaPosition);
+		gameObject.transform.Translate(2 * deltaPosition);
+	}
 }
