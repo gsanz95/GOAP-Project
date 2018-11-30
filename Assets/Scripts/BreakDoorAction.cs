@@ -13,7 +13,7 @@ public class BreakDoorAction : AIAction {
 		this.addPrerequisite("HasKey", false);
 		this.addEffect("HasOpenedDoor", true);
 		this.maxDistance = 4f;
-		this.costToPerform = 20f;
+		this.costToPerform = 10f;
 		this.hasBrokenDoor = false;
 	}
 
